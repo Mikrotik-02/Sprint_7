@@ -37,3 +37,14 @@ def register_new_courier_and_return_login_password():
 
     # возвращаем список
     return login_pass
+
+
+def generate_courier_payload():
+    letters = string.ascii_lowercase
+    random_string = ''.join(random.choice(letters) for i in range(10))
+
+    return {
+        "login": random_string,
+        "password": random_string,
+        "firstName": random_string
+    }
