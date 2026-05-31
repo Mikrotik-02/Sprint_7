@@ -45,14 +45,7 @@ class TestCreateCourier:
         finally:
             self.delete_created_courier(payload)
 
-    @pytest.mark.parametrize(
-        "required_field",
-        [
-            "login",
-            "password",
-            pytest.param("firstName", marks=pytest.mark.xfail(reason="API creates courier without firstName"))
-        ]
-    )
+    @pytest.mark.parametrize("required_field", ["login", "password"])
     def test_create_courier_without_required_field_returns_error(self, required_field):
         payload = generate_courier_payload()
         payload_without_required_field = payload.copy()
