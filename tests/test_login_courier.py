@@ -1,9 +1,12 @@
+import allure
 import pytest
 
 from api.courier_api import CourierAPI
 from data.courier_data import CourierData
 
 
+@allure.epic("API Яндекс Самокат")
+@allure.feature("Логин курьера")
 class TestLoginCourier:
     def setup_method(self):
         self.courier_api = CourierAPI()
@@ -14,6 +17,8 @@ class TestLoginCourier:
             "password": courier_data[1]
         }
 
+    @allure.title("Логин курьера")
+    @allure.description("Проверяет, что созданный курьер может авторизоваться.")
     def test_login_courier_success(self, courier_data):
         login_payload = self._get_login_payload(courier_data)
 
@@ -40,6 +45,8 @@ class TestLoginCourier:
             )
         ]
     )
+    @allure.title("Логин курьера без обязательного поля")
+    @allure.description("Проверяет, что запрос логина без обязательного поля возвращает ошибку.")
     def test_login_courier_without_required_field_returns_error(
         self,
         courier_data,
@@ -58,6 +65,8 @@ class TestLoginCourier:
         else:
             assert response.text == expected_body
 
+    @allure.title("Логин несуществующего курьера")
+    @allure.description("Проверяет, что нельзя авторизоваться под несуществующим пользователем.")
     def test_login_non_existent_courier_returns_error(self):
         response = self.courier_api.login_courier(CourierData.NON_EXISTENT_COURIER)
 
@@ -67,6 +76,8 @@ class TestLoginCourier:
             "message": "Учетная запись не найдена"
         }
 
+    @allure.title("Логин курьера с неверным логином")
+    @allure.description("Проверяет, что нельзя авторизоваться с неправильным логином.")
     def test_login_courier_with_wrong_login_returns_error(self, courier_data):
         login_payload = self._get_login_payload(courier_data)
         login_payload["login"] = "wrong" + login_payload["login"]
@@ -79,6 +90,8 @@ class TestLoginCourier:
             "message": "Учетная запись не найдена"
         }
 
+    @allure.title("Логин курьера с неверным паролем")
+    @allure.description("Проверяет, что нельзя авторизоваться с неправильным паролем.")
     def test_login_courier_with_wrong_password_returns_error(self, courier_data):
         login_payload = self._get_login_payload(courier_data)
         login_payload["password"] = "wrong" + login_payload["password"]

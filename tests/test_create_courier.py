@@ -1,9 +1,12 @@
+import allure
 import pytest
 
 from api.courier_api import CourierAPI
 from helpers.generators import generate_courier_payload
 
 
+@allure.epic("API Яндекс Самокат")
+@allure.feature("Создание курьера")
 class TestCreateCourier:
     courier_api = CourierAPI()
 
@@ -18,6 +21,8 @@ class TestCreateCourier:
             if courier_id:
                 self.courier_api.delete_courier(courier_id)
 
+    @allure.title("Создание курьера")
+    @allure.description("Проверяет, что курьера можно создать с валидными данными.")
     def test_create_courier_success(self):
         payload = generate_courier_payload()
 
@@ -29,6 +34,8 @@ class TestCreateCourier:
         finally:
             self.delete_created_courier(payload)
 
+    @allure.title("Создание двух одинаковых курьеров")
+    @allure.description("Проверяет, что нельзя создать двух курьеров с одинаковыми данными.")
     def test_create_two_same_couriers_returns_error(self):
         payload = generate_courier_payload()
 
@@ -46,6 +53,8 @@ class TestCreateCourier:
             self.delete_created_courier(payload)
 
     @pytest.mark.parametrize("required_field", ["login", "password"])
+    @allure.title("Создание курьера без обязательного поля")
+    @allure.description("Проверяет, что запрос без обязательного поля возвращает ошибку.")
     def test_create_courier_without_required_field_returns_error(self, required_field):
         payload = generate_courier_payload()
         payload_without_required_field = payload.copy()
