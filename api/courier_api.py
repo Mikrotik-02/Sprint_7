@@ -11,3 +11,7 @@ class CourierAPI:
     def login_courier(self, payload):
         response = requests.post(BASE_URL + LOGIN_COURIER, json=payload)
         return response
+
+    def delete_courier(self, courier_id):
+        response = requests.delete(BASE_URL + CREATE_COURIER + f"/{courier_id}")
+        return response
