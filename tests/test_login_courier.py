@@ -1,5 +1,4 @@
 import allure
-import pytest
 
 from api.courier_api import CourierAPI
 from data.courier_data import CourierData
@@ -27,43 +26,30 @@ class TestLoginCourier:
         assert response.status_code == 200
         assert "id" in response.json()
 
-    @pytest.mark.parametrize(
-        "required_field, expected_status_code, expected_body",
-        [
-            (
-                "login",
-                400,
-                {
-                    "code": 400,
-                    "message": "Недостаточно данных для входа"
-                }
-            ),
-            (
-                "password",
-                504,
-                "Service unavailable"
-            )
-        ]
-    )
-    @allure.title("Логин курьера без обязательного поля")
-    @allure.description("Проверяет, что запрос логина без обязательного поля возвращает ошибку.")
-    def test_login_courier_without_required_field_returns_error(
-        self,
-        courier_data,
-        required_field,
-        expected_status_code,
-        expected_body
-    ):
+    @allure.title("Логин курьера без логина")
+    @allure.description("Проверяет, что запрос логина без поля login возвращает ошибку.")
+    def test_login_courier_without_login_returns_error(self, courier_data):
         login_payload = self._get_login_payload(courier_data)
-        login_payload.pop(required_field)
+        login_payload.pop("login")
 
         response = self.courier_api.login_courier(login_payload)
 
-        assert response.status_code == expected_status_code
-        if isinstance(expected_body, dict):
-            assert response.json() == expected_body
-        else:
-            assert response.text == expected_body
+        assert response.status_code == 400
+        assert response.json() == {
+            "code": 400,
+            "message": "Недостаточно данных для входа"
+        }
+
+    @allure.title("Логин курьера без пароля")
+    @allure.description("Проверяет, что запрос логина без поля password возвращает ошибку.")
+    def test_login_courier_without_password_returns_error(self, courier_data):
+        login_payload = self._get_login_payload(courier_data)
+        login_payload.pop("password")
+
+        response = self.courier_api.login_courier(login_payload)
+
+        assert response.status_code == 504
+        assert response.text == "Service unavailable"
 
     @allure.title("Логин несуществующего курьера")
     @allure.description("Проверяет, что нельзя авторизоваться под несуществующим пользователем.")
